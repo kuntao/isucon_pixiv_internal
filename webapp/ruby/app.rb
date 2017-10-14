@@ -332,7 +332,7 @@ module Isuconp
           params["body"],
         )
         pid = db.last_id
-        File.open("../public/image/#{pid}.#{ext}") do |f|
+        File.open("../public/image/#{pid}.#{ext}", "wb") do |f|
           f.write params["file"][:tempfile].read
         end
 
