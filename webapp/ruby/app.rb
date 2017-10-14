@@ -276,7 +276,7 @@ module Isuconp
     end
 
     get '/posts/:id' do
-      results = db.prepare('SELECT * FROM `posts` WHERE `id` = ?').execute(
+      results = db.prepare('SELECT `id`, `user_id`, `body`, `created_at`, `mime` FROM `posts` WHERE `id` = ?').execute(
         params[:id]
       )
       posts = make_posts(results, all_comments: true)
