@@ -52,28 +52,6 @@ module Isuconp
         sql.each do |s|
           db.prepare(s).execute
         end
-        dump_images
-      end
-
-      def dump_images
-        posts = db.query('SELECT id,mime FROM `posts`').to_a
-
-        posts.each do |post|
-          pid = post[:id].to_i
-          img = db.prepare('SELECT * FROM `posts` WHERE `id` = ?').execute(pid).first[:imgdata]
-
-          ext = if (post[:mime] == "image/jpeg")
-            'jpg'
-          elsif(post[:mime] == "image/png")
-            'png'
-          elsif(post[:mime] == "image/gif")
-            'gif'
-          end
-
-          File.open("../public/image/#{pid}.#{ext}", "wb") do |f|
-            f.write img
-          end
-        end
       end
 
       def try_login(account_name, password)
@@ -371,23 +349,23 @@ module Isuconp
       end
     end
 
-    # get '/image/:id.:ext' do
+    get '/image/:id.:ext' do
       
-    #   if params[:id].to_i == 0
-    #     return ""
-    #   end
+      if params[:id].to_i == 0
+        return ""
+      end
 
-    #   post = db.prepare('SELECT * FROM `posts` WHERE `id` = ?').execute(params[:id].to_i).first
+      post = db.prepare('SELECT * FROM `posts` WHERE `id` = ?').execute(params[:id].to_i).first
 
-    #   if (params[:ext] == "jpg" && post[:mime] == "image/jpeg") ||
-    #       (params[:ext] == "png" && post[:mime] == "image/png") ||
-    #       (params[:ext] == "gif" && post[:mime] == "image/gif")
-    #     headers['Content-Type'] = post[:mime]
-    #     return post[:imgdata]
-    #   end
+      if (params[:ext] == "jpg" && post[:mime] == "image/jpeg") ||
+          (params[:ext] == "png" && post[:mime] == "image/png") ||
+          (params[:ext] == "gif" && post[:mime] == "image/gif")
+        headers['Content-Type'] = post[:mime]
+        return post[:imgdata]
+      end
 
-    #   return 404
-    # end
+      return 404
+    end
 
     post '/comment' do
       me = get_session_user()
