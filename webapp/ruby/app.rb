@@ -324,16 +324,17 @@ module Isuconp
         end
 
         params['file'][:tempfile].rewind
+        image_binary = params["file"][:tempfile].read
         query = 'INSERT INTO `posts` (`user_id`, `mime`, `imgdata`, `body`) VALUES (?,?,?,?)'
         db.prepare(query).execute(
           me[:id],
           mime,
-          params["file"][:tempfile].read,
+          image_binary,
           params["body"],
         )
         pid = db.last_id
         File.open("../public/image/#{pid}.#{ext}", "wb") do |f|
-          f.write params["file"][:tempfile].read
+          f.write image_binary
         end
 
         redirect "/posts/#{pid}", 302
