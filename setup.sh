@@ -12,3 +12,7 @@ cp my.cnf /etc/mysql/my.cnf
 systemctl restart mysql
 
 systemctl restart isu-ruby
+
+rm /home/isucon/private_isu/webapp/public/image/*.jpg
+rm /home/isucon/private_isu/webapp/public/image/*.png
+rm /home/isucon/private_isu/webapp/public/image/*.gif
