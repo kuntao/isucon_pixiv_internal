@@ -144,7 +144,7 @@ module Isuconp
       end
 
       def me
-        @me ||= get_session_user()
+        get_session_user()
       end
     end
 
