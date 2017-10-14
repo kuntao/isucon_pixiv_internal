@@ -142,10 +142,6 @@ module Isuconp
 
         "/image/#{post[:id]}#{ext}"
       end
-
-      def me
-        get_session_user()
-      end
     end
 
     get '/initialize' do
@@ -226,6 +222,8 @@ module Isuconp
     end
 
     get '/' do
+      me = get_session_user()
+      
       options = { compress: true }
       dc = Dalli::Client.new('127.0.0.1:11211', options)
       index_page_posts_html = dc.get('index_page_posts_html')
@@ -237,7 +235,6 @@ module Isuconp
 
         dc.set 'index_page_posts_html', index_page_posts_html
       end
-
       erb :index, layout: :layout, locals: { posts_html: index_page_posts_html, me: me }
     end
 

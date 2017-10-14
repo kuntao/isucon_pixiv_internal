@@ -13,6 +13,8 @@ systemctl restart mysql
 
 systemctl restart isu-ruby
 
+systemctl restart memcached
+
 rm /home/isucon/private_isu/webapp/public/image/*.jpg
 rm /home/isucon/private_isu/webapp/public/image/*.png
 rm /home/isucon/private_isu/webapp/public/image/*.gif
