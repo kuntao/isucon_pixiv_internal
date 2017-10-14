@@ -54,6 +54,27 @@ module Isuconp
         end
       end
 
+      def dump_images
+        posts = db.query('SELECT id,mime FROM `posts` WHERE id < 3').to_a
+
+        posts.each do |post|
+          pid = post[:id].to_i
+          img = db.prepare('SELECT * FROM `posts` WHERE `id` = ?').execute(pid).first[:imgdata]
+
+          ext = if (post[:mime] == "image/jpeg")
+            'jpg'
+          elsif(post[:mime] == "image/png")
+            'png'
+          elsif(post[:mime] == "image/gif")
+            'gif'
+          end
+
+          File.open("../public/image/#{pid}.#{ext}", "wb") do |f|
+            f.write img
+          end
+        end
+      end
+
       def try_login(account_name, password)
         user = db.prepare('SELECT * FROM users WHERE account_name = ? AND del_flg = 0').execute(account_name).first
 
