@@ -101,7 +101,7 @@ module Isuconp
         posts = []
 
         needs_bind = !where.nil? && where.include?("?")
-        query = "SELECT `posts`.`id`, `posts`.`user_id`, `posts`.`body`, `posts`.`created_at`, `posts`.`mime` users.name as user_name FROM `posts` JOIN users on users.id = posts.user_id and users.del_flg = 0"
+        query = "SELECT `posts`.`id`, `posts`.`user_id`, `posts`.`body`, `posts`.`created_at`, `posts`.`mime`, users.account_name as user_name FROM `posts` JOIN users on users.id = posts.user_id and users.del_flg = 0"
         unless where.nil?
           if (needs_bind && !param.nil?) || !needs_bind
             query += " WHERE #{where}"
