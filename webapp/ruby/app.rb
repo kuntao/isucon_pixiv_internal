@@ -99,11 +99,11 @@ module Isuconp
 
       def make_posts(where: nil, order: nil, param: nil, all_comments: false)
         posts = []
-        base_query = "SELECT `id`, `user_id`, `body`, `created_at`, `mime` FROM `posts`"
-        base_query += " WHERE #{where}" unless where.nil?
-        base_query += " ORDER BY #{order}" unless order.nil?
+        query = "SELECT `id`, `user_id`, `body`, `created_at`, `mime` FROM `posts`"
+        query += " WHERE #{where}" unless where.nil?
+        query += " ORDER BY #{order}" unless order.nil?
 
-        results = db.prepare(whole_query).execute(param)
+        results = db.prepare(query).execute(param)
 
         results.to_a.each do |post|
           post[:comment_count] = db.prepare('SELECT COUNT(*) AS `count` FROM `comments` WHERE `post_id` = ?').execute(
@@ -114,7 +114,7 @@ module Isuconp
           unless all_comments
             query += ' LIMIT 3'
           end
-          comments = db.prepare(query).execute(
+          comments = db.prepare(query).execute(g
             post[:id]
           ).to_a
           comments.each do |comment|
