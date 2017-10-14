@@ -2,6 +2,7 @@ require 'sinatra/base'
 require 'mysql2'
 require 'rack-flash'
 require 'shellwords'
+require 'dalli'
 
 module Isuconp
   class App < Sinatra::Base
@@ -221,10 +222,20 @@ module Isuconp
     end
 
     get '/' do
-      me = get_session_user()
-      posts = make_posts(order: "`posts`.`created_at` DESC")
+      options = { compress: true }
+      dc = Dalli::Client.new('localhost:11211', options)
+      index_page_posts_html = dc.get('index_page_posts_html')
 
-      erb :index, layout: :layout, locals: { posts: posts, me: me }
+      if index_page_posts_html.nil?
+        me = get_session_user()
+        posts = make_posts(order: "`posts`.`created_at` DESC")
+
+        index_page_posts_html = erb :posts, locals: { posts: posts }
+
+        dc.set 'index_page_posts_html', index_page_posts_html
+      end
+
+      erb :index, layout: :layout, locals: { posts_html: index_page_posts_html, me: me }
     end
 
     get '/@:account_name' do
