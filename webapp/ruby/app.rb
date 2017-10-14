@@ -116,7 +116,7 @@ module Isuconp
             post[:id]
           ).first[:count]
 
-          query = 'SELECT `comments`.*, `users`.`account_name` as `user_name` FROM `comments` JOINS `users` on `users`.`id` = `comments`.`user_id` WHERE `comments`.`post_id` = ? ORDER BY `comments`.`created_at` DESC'
+          query = 'SELECT `comments`.*, `users`.`account_name` as `user_name` FROM `comments` JOIN `users` on `users`.`id` = `comments`.`user_id` WHERE `comments`.`post_id` = ? ORDER BY `comments`.`created_at` DESC'
           unless all_comments
             query += ' LIMIT 3'
           end
