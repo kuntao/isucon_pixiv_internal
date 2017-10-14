@@ -272,11 +272,16 @@ module Isuconp
 
     get '/posts' do
       max_created_at = params['max_created_at']
-      posts = make_posts(
-        where: "`created_at` <= ?",
-        order: "`created_at` DESC",
-        param: max_created_at.nil? ? nil : Time.iso8601(max_created_at).localtime
-      )
+      param = max_created_at.nil? ? nil : Time.iso8601(max_created_at).localtime
+      attrs = { order: "`created_at` DESC" }
+      if param
+        attrs.merge!(
+          where: "`created_at` <= ?",
+          param: param
+        )
+      end
+
+      posts = make_posts attrs
 
       erb :posts, layout: false, locals: { posts: posts }
     end
