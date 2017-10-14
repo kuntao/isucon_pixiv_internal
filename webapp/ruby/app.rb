@@ -114,7 +114,7 @@ module Isuconp
           unless all_comments
             query += ' LIMIT 3'
           end
-          comments = db.prepare(query).execute(g
+          comments = db.prepare(query).execute(
             post[:id]
           ).to_a
           comments.each do |comment|
