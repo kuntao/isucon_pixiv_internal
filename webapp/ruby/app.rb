@@ -227,7 +227,6 @@ module Isuconp
       index_page_posts_html = dc.get('index_page_posts_html')
 
       if index_page_posts_html.nil?
-        me = get_session_user()
         posts = make_posts(order: "`posts`.`created_at` DESC")
 
         index_page_posts_html = erb :posts, locals: { posts: posts }
@@ -235,6 +234,7 @@ module Isuconp
         dc.set 'index_page_posts_html', index_page_posts_html
       end
 
+      me = get_session_user()
       erb :index, layout: :layout, locals: { posts_html: index_page_posts_html, me: me }
     end
 
