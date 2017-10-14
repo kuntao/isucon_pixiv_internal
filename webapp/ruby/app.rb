@@ -101,7 +101,7 @@ module Isuconp
         posts = []
 
         needs_bind = !where.nil? && where.include?("?")
-        query = "SELECT `posts`.`id`, `posts`.`user_id`, `posts`.`body`, `posts`.`created_at`, `posts`.`mime`, users.account_name as user_name FROM `posts` JOIN users on users.id = posts.user_id and users.del_flg = 0"
+        query = "SELECT `posts`.`id`, `posts`.`body`, `posts`.`created_at`, `posts`.`mime`, users.account_name as user_name FROM `posts` JOIN users on users.id = posts.user_id and users.del_flg = 0"
         unless where.nil?
           if (needs_bind && !param.nil?) || !needs_bind
             query += " WHERE #{where}"
@@ -110,6 +110,7 @@ module Isuconp
         query += " ORDER BY #{order}" unless order.nil?
         query += " LIMIT #{POSTS_PER_PAGE}"
 
+        puts query
         results = needs_bind ? db.prepare(query).execute(param) : db.query(query)
 
         results.to_a.each do |post|
