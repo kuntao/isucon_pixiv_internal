@@ -108,9 +108,6 @@ module Isuconp
           end
         end
         query += " ORDER BY #{order}" unless order.nil?
-        puts query
-        puts param
-        puts needs_bind
 
         results = needs_bind ? db.prepare(query).execute(param) : db.query(query)
 
