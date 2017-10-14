@@ -164,6 +164,11 @@ module Isuconp
       end
     end
 
+    get 'dump_images' do
+      dump_images
+      return 200
+    end
+
     get '/initialize' do
       db_initialize
       return 200
