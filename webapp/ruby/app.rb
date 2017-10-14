@@ -100,7 +100,7 @@ module Isuconp
       def make_posts(where: nil, order: nil, param: nil, all_comments: false)
         posts = []
 
-        needs_bind = where.include?("?")
+        needs_bind = !where.nil? && where.include?("?")
         query = "SELECT `id`, `user_id`, `body`, `created_at`, `mime` FROM `posts`"
         unless where.nil?
           if (needs_bind && !param.nil?) || !needs_bind
