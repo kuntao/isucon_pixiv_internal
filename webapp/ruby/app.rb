@@ -164,7 +164,7 @@ module Isuconp
       end
     end
 
-    get 'dump_images' do
+    get '/dump_images' do
       dump_images
       return 200
     end
