@@ -103,6 +103,7 @@ module Isuconp
         query += " WHERE #{where}" unless where.nil?
         query += " ORDER BY #{order}" unless order.nil?
 
+        puts query
         results = db.prepare(query).execute(param)
 
         results.to_a.each do |post|

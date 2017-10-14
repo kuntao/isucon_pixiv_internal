@@ -1,4 +1,4 @@
-set -ex
+set -x
 
 now=`date +%Y%m%d-%H%M%S`
 mv /var/log/nginx/access.log /var/log/nginx/access.log.$now # nginxのログをローテート
