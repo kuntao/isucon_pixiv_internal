@@ -97,8 +97,14 @@ module Isuconp
         end
       end
 
-      def make_posts(results, all_comments: false)
+      def make_posts(where: nil, order: nil, param: nil, all_comments: false)
         posts = []
+        base_query = "SELECT `id`, `user_id`, `body`, `created_at`, `mime` FROM `posts`"
+        base_query += " WHERE #{where}" unless where.nil?
+        base_query += " ORDER BY #{order}" unless order.nil?
+
+        results = db.prepare(whole_query).execute(param)
+
         results.to_a.each do |post|
           post[:comment_count] = db.prepare('SELECT COUNT(*) AS `count` FROM `comments` WHERE `post_id` = ?').execute(
             post[:id]
@@ -222,9 +228,7 @@ module Isuconp
 
     get '/' do
       me = get_session_user()
-
-      results = db.query('SELECT `id`, `user_id`, `body`, `created_at`, `mime` FROM `posts` ORDER BY `created_at` DESC')
-      posts = make_posts(results)
+      posts = make_posts(order: "`created_at` DESC")
 
       erb :index, layout: :layout, locals: { posts: posts, me: me }
     end
@@ -238,10 +242,11 @@ module Isuconp
         return 404
       end
 
-      results = db.prepare('SELECT `id`, `user_id`, `body`, `mime`, `created_at` FROM `posts` WHERE `user_id` = ? ORDER BY `created_at` DESC').execute(
-        user[:id]
+      posts = make_posts(
+        where: "`user_id` = ?",
+        order: "`created_at` DESC",
+        param: user[:id]
       )
-      posts = make_posts(results)
 
       comment_count = db.prepare('SELECT COUNT(*) AS count FROM `comments` WHERE `user_id` = ?').execute(
         user[:id]
@@ -267,19 +272,24 @@ module Isuconp
 
     get '/posts' do
       max_created_at = params['max_created_at']
-      results = db.prepare('SELECT `id`, `user_id`, `body`, `mime`, `created_at` FROM `posts` WHERE `created_at` <= ? ORDER BY `created_at` DESC').execute(
-        max_created_at.nil? ? nil : Time.iso8601(max_created_at).localtime
+      posts = make_posts(
+        where: "`created_at` <= ?",
+        order: "`created_at` DESC",
+        param: max_created_at.nil? ? nil : Time.iso8601(max_created_at).localtime
       )
-      posts = make_posts(results)
 
       erb :posts, layout: false, locals: { posts: posts }
     end
 
     get '/posts/:id' do
-      results = db.prepare('SELECT `id`, `user_id`, `body`, `created_at`, `mime` FROM `posts` WHERE `id` = ?').execute(
+      results = db.prepare('WHERE `id` = ?').execute(
         params[:id]
       )
-      posts = make_posts(results, all_comments: true)
+      posts = make_posts(
+        where: '`id` = ?',
+        param: params[:id],
+        all_comments: true
+      )
 
       return 404 if posts.length == 0
 
