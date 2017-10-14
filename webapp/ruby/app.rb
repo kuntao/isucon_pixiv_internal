@@ -52,10 +52,11 @@ module Isuconp
         sql.each do |s|
           db.prepare(s).execute
         end
+        dump_images
       end
 
       def dump_images
-        posts = db.query('SELECT id,mime FROM `posts` WHERE id < 3').to_a
+        posts = db.query('SELECT id,mime FROM `posts` WHERE').to_a
 
         posts.each do |post|
           pid = post[:id].to_i
