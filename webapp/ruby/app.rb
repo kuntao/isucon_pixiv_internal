@@ -101,7 +101,7 @@ module Isuconp
         posts = []
 
         needs_bind = !where.nil? && where.include?("?")
-        query = "SELECT `id`, `user_id`, `body`, `created_at`, `mime` FROM `posts`"
+        query = "SELECT `posts`.`id`, `posts`.`user_id`, `posts`.`body`, `posts`.`created_at`, `posts`.`mime` FROM `posts`"
         unless where.nil?
           if (needs_bind && !param.nil?) || !needs_bind
             query += " WHERE #{where}"
@@ -234,7 +234,7 @@ module Isuconp
 
     get '/' do
       me = get_session_user()
-      posts = make_posts(order: "`created_at` DESC")
+      posts = make_posts(order: "`posts`.`created_at` DESC")
 
       erb :index, layout: :layout, locals: { posts: posts, me: me }
     end
@@ -249,8 +249,8 @@ module Isuconp
       end
 
       posts = make_posts(
-        where: "`user_id` = ?",
-        order: "`created_at` DESC",
+        where: "`posts`.`user_id` = ?",
+        order: "`posts`.`created_at` DESC",
         param: user[:id]
       )
 
@@ -279,8 +279,8 @@ module Isuconp
     get '/posts' do
       max_created_at = params['max_created_at']
       posts = make_posts(
-        where: "`created_at` <= ?",
-        order: "`created_at` DESC",
+        where: "`posts`.`created_at` <= ?",
+        order: "`posts`.`created_at` DESC",
         param: max_created_at.nil? ? nil : Time.iso8601(max_created_at).localtime
       )
 
@@ -289,7 +289,7 @@ module Isuconp
 
     get '/posts/:id' do
       posts = make_posts(
-        where: '`id` = ?',
+        where: '`posts`.`id` = ?',
         param: params[:id],
         all_comments: true
       )
