@@ -102,14 +102,17 @@ module Isuconp
 
         needs_bind = where.include?("?")
         query = "SELECT `id`, `user_id`, `body`, `created_at`, `mime` FROM `posts`"
-        if !where.nil?
+        unless where.nil?
           if (needs_bind && !param.nil?) || !needs_bind
             query += " WHERE #{where}"
           end
         end
         query += " ORDER BY #{order}" unless order.nil?
+        puts query
+        puts param
+        puts needs_bind
 
-        results = needs_bind ? db.query(query) : db.prepare(query).execute(param)
+        results = needs_bind ? db.prepare(query).execute(param) : db.query(query)
 
         results.to_a.each do |post|
           post[:comment_count] = db.prepare('SELECT COUNT(*) AS `count` FROM `comments` WHERE `post_id` = ?').execute(
