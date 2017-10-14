@@ -142,6 +142,10 @@ module Isuconp
 
         "/image/#{post[:id]}#{ext}"
       end
+
+      def me
+        @me ||= get_session_user()
+      end
     end
 
     get '/initialize' do
@@ -234,7 +238,6 @@ module Isuconp
         dc.set 'index_page_posts_html', index_page_posts_html
       end
 
-      me = get_session_user()
       erb :index, layout: :layout, locals: { posts_html: index_page_posts_html, me: me }
     end
 
