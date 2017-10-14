@@ -98,8 +98,6 @@ module Isuconp
       end
 
       def make_posts(where: nil, order: nil, param: nil, all_comments: false)
-        posts = []
-
         needs_bind = !where.nil? && where.include?("?")
         query = "SELECT `posts`.`id`, `posts`.`body`, `posts`.`created_at`, `posts`.`mime`, users.account_name as user_name FROM `posts` JOIN users on users.id = posts.user_id and users.del_flg = 0"
         unless where.nil?
@@ -113,7 +111,7 @@ module Isuconp
         puts query
         results = needs_bind ? db.prepare(query).execute(param) : db.query(query)
 
-        results.to_a.each do |post|
+        results.to_a.map do |post|
           post[:comment_count] = db.prepare('SELECT COUNT(*) AS `count` FROM `comments` WHERE `post_id` = ?').execute(
             post[:id]
           ).first[:count]
@@ -131,9 +129,9 @@ module Isuconp
             ).first
           end
           post[:comments] = comments.reverse
-        end
 
-        posts
+          post
+        end
       end
 
       def image_url(post)
