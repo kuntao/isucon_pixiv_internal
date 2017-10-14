@@ -116,18 +116,13 @@ module Isuconp
             post[:id]
           ).first[:count]
 
-          query = 'SELECT * FROM `comments` WHERE `post_id` = ? ORDER BY `created_at` DESC'
+          query = 'SELECT `comments`.*, `users`.`account_name` as user_name FROM `comments` JOINS `users` on `users`.`id` = `comments`.`user_id` WHERE `post_id` = ? ORDER BY `comments`.`created_at` DESC'
           unless all_comments
             query += ' LIMIT 3'
           end
           comments = db.prepare(query).execute(
             post[:id]
           ).to_a
-          comments.each do |comment|
-            comment[:user] = db.prepare('SELECT * FROM `users` WHERE `id` = ?').execute(
-              comment[:user_id]
-            ).first
-          end
           post[:comments] = comments.reverse
 
           post
