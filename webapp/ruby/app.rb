@@ -100,7 +100,7 @@ module Isuconp
       def make_posts(where: nil, order: nil, param: nil, all_comments: false)
         posts = []
         query = "SELECT `id`, `user_id`, `body`, `created_at`, `mime` FROM `posts`"
-        query += " WHERE #{where}" unless where.nil?
+        query += " WHERE #{where}" if !where.nil? && !where.include?("?")
         query += " ORDER BY #{order}" unless order.nil?
 
         results = param.nil? ? db.query(query) : db.prepare(query).execute(param)
@@ -282,9 +282,6 @@ module Isuconp
     end
 
     get '/posts/:id' do
-      results = db.prepare('WHERE `id` = ?').execute(
-        params[:id]
-      )
       posts = make_posts(
         where: '`id` = ?',
         param: params[:id],
