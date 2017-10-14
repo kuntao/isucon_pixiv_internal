@@ -102,7 +102,11 @@ module Isuconp
 
         needs_bind = where.include?("?")
         query = "SELECT `id`, `user_id`, `body`, `created_at`, `mime` FROM `posts`"
-        query += " WHERE #{where}" unless where.nil? || (needs_bind && param.nil?)
+        if !where.nil?
+          if (needs_bind && !param.nil?) || !needs_bind
+            query += " WHERE #{where}"
+          end
+        end
         query += " ORDER BY #{order}" unless order.nil?
 
         results = needs_bind ? db.query(query) : db.prepare(query).execute(param)
