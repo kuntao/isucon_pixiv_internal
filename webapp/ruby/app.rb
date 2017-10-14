@@ -101,13 +101,14 @@ module Isuconp
         posts = []
 
         needs_bind = !where.nil? && where.include?("?")
-        query = "SELECT `posts`.`id`, `posts`.`user_id`, `posts`.`body`, `posts`.`created_at`, `posts`.`mime` FROM `posts`"
+        query = "SELECT `posts`.`id`, `posts`.`user_id`, `posts`.`body`, `posts`.`created_at`, `posts`.`mime` users.name as user_name FROM `posts` users on users.id = posts.user_id and users.del_flg = 0"
         unless where.nil?
           if (needs_bind && !param.nil?) || !needs_bind
             query += " WHERE #{where}"
           end
         end
         query += " ORDER BY #{order}" unless order.nil?
+        query += " LIMIT #{POSTS_PER_PAGE}"
 
         results = needs_bind ? db.prepare(query).execute(param) : db.query(query)
 
@@ -129,13 +130,6 @@ module Isuconp
             ).first
           end
           post[:comments] = comments.reverse
-
-          post[:user] = db.prepare('SELECT * FROM `users` WHERE `id` = ?').execute(
-            post[:user_id]
-          ).first
-
-          posts.push(post) if post[:user][:del_flg] == 0
-          break if posts.length >= POSTS_PER_PAGE
         end
 
         posts
