@@ -56,7 +56,7 @@ module Isuconp
       end
 
       def dump_images
-        posts = db.query('SELECT id,mime FROM `posts` WHERE').to_a
+        posts = db.query('SELECT id,mime FROM `posts`').to_a
 
         posts.each do |post|
           pid = post[:id].to_i
