@@ -361,7 +361,7 @@ module Isuconp
           (params[:ext] == "png" && post[:mime] == "image/png") ||
           (params[:ext] == "gif" && post[:mime] == "image/gif")
         headers['Content-Type'] = post[:mime]
-        File.open("../public/image/#{params[:id]}.#{ext}", "wb") do |f|
+        File.open("../public/image/#{params[:id]}.#{params[:ext]}", "wb") do |f|
           f.write post[:imgdata]
         end
 
