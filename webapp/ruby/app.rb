@@ -223,19 +223,11 @@ module Isuconp
 
     get '/' do
       me = get_session_user()
-      
+
       options = { compress: true }
-      dc = Dalli::Client.new('127.0.0.1:11211', options)
-      index_page_posts_html = dc.get('index_page_posts_html')
+      @dc = Dalli::Client.new('127.0.0.1:11211', options)
 
-      if index_page_posts_html.nil?
-        posts = make_posts(order: "`posts`.`created_at` DESC")
-
-        index_page_posts_html = erb :posts, locals: { posts: posts }
-
-        dc.set 'index_page_posts_html', index_page_posts_html
-      end
-      erb :index, layout: :layout, locals: { posts_html: index_page_posts_html, me: me }
+      erb :index, layout: :layout, locals: { me: me }
     end
 
     get '/@:account_name' do
