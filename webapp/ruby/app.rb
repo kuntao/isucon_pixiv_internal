@@ -103,8 +103,7 @@ module Isuconp
         query += " WHERE #{where}" unless where.nil?
         query += " ORDER BY #{order}" unless order.nil?
 
-        puts query
-        results = db.prepare(query).execute(param)
+        results = param.nil? ? db.query(query) : db.prepare(query).execute(param)
 
         results.to_a.each do |post|
           post[:comment_count] = db.prepare('SELECT COUNT(*) AS `count` FROM `comments` WHERE `post_id` = ?').execute(
