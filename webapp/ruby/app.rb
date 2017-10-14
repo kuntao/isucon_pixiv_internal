@@ -223,7 +223,7 @@ module Isuconp
 
     get '/' do
       options = { compress: true }
-      dc = Dalli::Client.new('localhost:11211', options)
+      dc = Dalli::Client.new('127.0.0.1:11211', options)
       index_page_posts_html = dc.get('index_page_posts_html')
 
       if index_page_posts_html.nil?
